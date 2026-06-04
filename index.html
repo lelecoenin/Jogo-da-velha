@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Jogo da Velha</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      color: #fff;
+      margin: 0;
+      padding: 0;
+    }
+    h1 {
+      margin: 20px 0;
+      font-size: 2.5em;
+      text-shadow: 2px 2px 5px #000;
+    }
+    #tabuleiro {
+      display: grid;
+      grid-template-columns: repeat(3, 120px);
+      grid-template-rows: repeat(3, 120px);
+      gap: 10px;
+      justify-content: center;
+      margin: 30px auto;
+    }
+    .celula {
+      background: #222;
+      border-radius: 15px;
+      font-size: 3em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+    }
+    .celula:hover {
+      background: #444;
+      transform: scale(1.05);
+    }
+    #mensagem {
+      margin-top: 20px;
+      font-size: 1.5em;
+      font-weight: bold;
+      text-shadow: 1px 1px 3px #000;
+    }
+    button {
+      margin-top: 20px;
+      padding: 12px 25px;
+      font-size: 1.1em;
+      border: none;
+      border-radius: 10px;
+      background: #ff9800;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+    }
+    button:hover {
+      background: #e68900;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎮 Jogo da Velha</h1>
+  <div id="tabuleiro"></div>
+  <div id="mensagem"></div>
+  <button onclick="reiniciar()">🔄 Reiniciar</button>
+
+  <script>
+    const tabuleiro = document.getElementById("tabuleiro");
+    const mensagem = document.getElementById("mensagem");
+    let jogador = "X";
+    let jogoAtivo = true;
+    let estado = ["", "", "", "", "", "", "", "", ""];
+
+  
+    for (let i = 0; i < 9; i++) {
+      const celula = document.createElement("div");
+      celula.classList.add("celula");
+      celula.dataset.index = i;
+      celula.addEventListener("click", jogar);
+      tabuleiro.appendChild(celula);
+    }
+
+    function jogar(e) {
+      const index = e.target.dataset.index;
+      if (estado[index] !== "" || !jogoAtivo) return;
+
+      estado[index] = jogador;
+      e.target.textContent = jogador;
+
+      if (verificarVitoria()) {
+        mensagem.textContent = `🏆 Jogador ${jogador} venceu!`;
+        jogoAtivo = false;
+        return;
+      }
+
+      if (!estado.includes("")) {
+        mensagem.textContent = "🤝 Empate!";
+        jogoAtivo = false;
+        return;
+      }
+
+      jogador = jogador === "X" ? "O" : "X";
+      mensagem.textContent = `🎲 Vez do jogador ${jogador}`;
+    }
+
+    function verificarVitoria() {
+      const combinacoes = [
+        [0,1,2],[3,4,5],[6,7,8], 
+        [0,3,6],[1,4,7],[2,5,8], 
+        [0,4,8],[2,4,6]          
+      ];
+      return combinacoes.some(comb => {
+        return comb.every(i => estado[i] === jogador);
+      });
+    }
+
+    function reiniciar() {
+      estado = ["", "", "", "", "", "", "", "", ""];
+      document.querySelectorAll(".celula").forEach(c => c.textContent = "");
+      jogador = "X";
+      jogoAtivo = true;
+      mensagem.textContent = `🎲 Vez do jogador ${jogador}`;
+    }
+
+   
+    mensagem.textContent = `🎲 Vez do jogador ${jogador}`;
+  </script>
+</body>
+</html>
